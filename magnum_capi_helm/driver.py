@@ -739,7 +739,13 @@ class Driver(driver.Driver):
         )
 
     def _get_floating_ip_enabled(self, cluster):
-        return self._get_label_bool(cluster, "floating_ip_enabled", True)
+        fip_enable = self._get_label_bool(
+            cluster, "master_lb_floating_ip_enabled", True
+        )
+        if fip_enable is not None:
+            return fip_enable
+        else:
+            return cluster.cluster_template.floating_ip_enabled
 
     def _get_octavia_provider(self, cluster):
         return self._label(cluster, "octavia_provider", "amphora")
